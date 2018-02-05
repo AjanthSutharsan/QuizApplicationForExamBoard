@@ -58,7 +58,7 @@ class CreatingQuizTitle {
             // next button which should allow the user to move onto the screen to make the questions
             val nextButton = Button("Next!")
             nextButton.setOnAction {
-                CreatingQuizQuestion.show()
+                CreatingQuizQuestion.show(1)
                 stage.close()
             }
 

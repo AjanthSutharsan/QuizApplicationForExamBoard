@@ -84,7 +84,9 @@ class MainMenu
             // Play a Quiz button
             val playQuizButton = Button("Play a quiz!")
             playQuizButton.style = buttonSTYLE
-            playQuizButton.setOnAction { Alert(Alert.AlertType.ERROR, "This button doesn’t do anything yet").showAndWait()
+            playQuizButton.setOnAction {
+                SearchingForQuiz.show()
+                stage.close()
             }
             playQuizButton.setMinSize(250.0, 150.0)
             middleVBox.children.add(playQuizButton)
@@ -115,7 +117,9 @@ class MainMenu
 
             // View highscores button
             val viewHighscoresButton = Button("View highscores!")
-            viewHighscoresButton.setOnAction { Alert(Alert.AlertType.ERROR, "This button doesn’t do anything yet").showAndWait()
+            viewHighscoresButton.setOnAction {
+                ViewHighScores.show()
+                stage.close()
             }
             viewHighscoresButton.style = buttonSTYLE
             viewHighscoresButton.setMinSize(250.0, 150.0)

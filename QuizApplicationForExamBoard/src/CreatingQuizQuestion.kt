@@ -8,7 +8,7 @@ import javafx.stage.Stage
 class CreatingQuizQuestion {
     companion object
     {
-        fun show()
+        fun show(questionNumber: Int)
         {
             val stage = Stage()
             stage.width = 1000.0
@@ -52,7 +52,7 @@ class CreatingQuizQuestion {
 
             // Label which contains the Question Number
             val questionNumberHBox = HBox()
-            val questionNumberLabel = Label("Question #1")
+            val questionNumberLabel = Label("Question #${questionNumber}")
             questionNumberLabel.style = "-fx-font-family: Georgia; -fx-font-size: 20; -fx-underline: true;"
             rightVBox.children.add(questionNumberHBox)
             (0 until 6).forEach {questionNumberHBox.children.add(Label("\t"))} //horizontal padding between the edge  and centre of the questionNumberHBox
@@ -72,9 +72,14 @@ class CreatingQuizQuestion {
                 answerTexts += answerText
             }
 
+            //button which moves the user onto the next question to make
             val nextButton = Button("Next!")
             nextButton.setMinSize(110.0, 60.0)
-            nextButton.setOnAction { Alert(Alert.AlertType.ERROR, "This button doesn’t do anything yet").showAndWait() }
+            nextButton.setOnAction {
+                if (questionNumber != 10) show(questionNumber + 1)
+                else FinishedCreatingQuiz.show()
+                stage.close()
+            }
             val nextButtonHBox = HBox()
             rightVBox.children.add(nextButtonHBox)
             (0 until 9).forEach{nextButtonHBox.children.add(Label("     "))} //padding between edge and centre of the nextButtonHBox
