@@ -11,7 +11,7 @@ class ViewHighScores
 {
     companion object
     {
-        fun show()
+        fun show(user: User)
         {
             val stage = Stage()
             stage.width = 1000.0

@@ -9,7 +9,7 @@ import javafx.stage.Stage
 class CreatingQuizTitle {
     companion object
     {
-        fun show()
+        fun show(user: User)
         {
             val stage = Stage()
             stage.width = 1000.0
@@ -29,7 +29,7 @@ class CreatingQuizTitle {
             stage.scene = scene
 
             // user label which displays the userID and the name of the user
-            val userLabel = TextArea("ID: 63485\nName: Lelouch Lamperouge")
+            val userLabel = TextArea("ID: ${user.userID}\nName: ${user.firstName} ${user.lastName}")
             userLabel.isEditable = false
             userLabel.setMaxSize(170.0, 45.0)
             topHBox.children.add(userLabel)
@@ -58,7 +58,8 @@ class CreatingQuizTitle {
             // next button which should allow the user to move onto the screen to make the questions
             val nextButton = Button("Next!")
             nextButton.setOnAction {
-                CreatingQuizQuestion.show(1)
+                DBService.writeQuizTitle(Quiz(-1, quizName.text))
+                CreatingQuizQuestion.show(1, user, DBService.nextQuizID()) //next free quizID is passed onto the CreatingQuizQuestion class
                 stage.close()
             }
 

@@ -12,7 +12,7 @@ class FinishedCreatingQuiz
 {
     companion object
     {
-        fun show()
+        fun show(user: User)
         {
             val stage = Stage()
             stage.width = 1000.0
@@ -54,7 +54,7 @@ class FinishedCreatingQuiz
             val yesButton = Button("Yes!")
             yesButton.setMinSize(250.0, 120.0)
             yesButton.setOnAction {
-                MainMenu.show()
+                MainMenu.show(user)
                 stage.close()
             }
             yesNoHBox.children.add(yesButton)

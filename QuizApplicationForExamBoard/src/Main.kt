@@ -70,10 +70,9 @@ class Main : Application()
         val loginHBox = HBox() //HBox which contains the button to log the user in
         val loginButton = Button("Log In!")
         loginButton.setOnAction {
-            Alert(Alert.AlertType.ERROR, "This button doesn’t do anything yet").showAndWait()
-            MainMenu.show()
+            MainMenu.show(User(63495, "Euphemia", "Li Britannia", "PeaceWithTheElevens"))
             stage.close()
-        } //when the button is clicked, the application will currently move to the home screen
+        } //when the button is clicked, the application will currently move immediately to the home screen
         (0 until 22).forEach { loginHBox.children.add(Label("      ")) }
         loginHBox.children.add(loginButton)
         (0 until 2).forEach { vbox.children.add(Label("")) } //horizontal padding between the left edge of the loginHBox and the centre of the window
@@ -88,6 +87,7 @@ class Main : Application()
         @JvmStatic fun main(args: Array<String>)
         {
             launch(Main::class.java)
+            DBService.close()
         }
         val COLLEGE_LOGO = Image(FileInputStream("C:/Users/Sutharsan/Pictures/logo.jpg")) //College Logo image file
     }

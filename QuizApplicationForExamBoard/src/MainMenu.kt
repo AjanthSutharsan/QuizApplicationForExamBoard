@@ -1,6 +1,5 @@
 import javafx.geometry.Insets
 import javafx.scene.Scene
-import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.TextArea
@@ -17,7 +16,7 @@ class MainMenu
     {
         val buttonSTYLE = "-fx-alignment: CENTER; -fx-accent: #d8eeff; -fx-focus-color: #6cd4f4;"
         val BACKGROUND_COLOUR_STYLE = "-fx-background: #ffb347"
-        fun show()
+        fun show(user : User)
         {
             val stage = Stage()
             stage.width = 1000.0
@@ -46,10 +45,11 @@ class MainMenu
             hbox.children.add(rightVBox)
 
             // user label which displays the userID and the name of the user
-            val userLabel = TextArea("ID: 63485\nName: Lelouch Lamperouge")
+            val userLabel = TextArea("ID: ${user.userID}\nName: ${user.firstName} ${user.lastName}")
             userLabel.isEditable = false
             userLabel.setMaxSize(170.0, 45.0)
             leftVBox.children.add(userLabel)
+
 
             // PADDING between userLabel and Play a Quiz button
             (0 until 22).forEach {
@@ -62,14 +62,14 @@ class MainMenu
             val makeQuizButton = Button("Make a quiz!")
             makeQuizButton.style = buttonSTYLE
             makeQuizButton.setOnAction {
-                CreatingQuizTitle.show()
+                CreatingQuizTitle.show(user)
                 stage.close()
             }
             makeQuizButton.setMinSize(250.0, 150.0)
             leftVBox.children.add(makeQuizButton)
 
             // College Logo
-            val image = ImageView(Image(FileInputStream("C:\\Users\\Sutharsan\\Pictures\\logo.jpg"))
+            val image = ImageView(Image(FileInputStream("C:/Users/Sutharsan/Pictures/logo.jpg"))
             )
             image.fitHeight = 250.1
             image.fitWidth = 250.1
@@ -85,7 +85,7 @@ class MainMenu
             val playQuizButton = Button("Play a quiz!")
             playQuizButton.style = buttonSTYLE
             playQuizButton.setOnAction {
-                SearchingForQuiz.show()
+                SearchingForQuiz.show(user)
                 stage.close()
             }
             playQuizButton.setMinSize(250.0, 150.0)
@@ -118,7 +118,7 @@ class MainMenu
             // View highscores button
             val viewHighscoresButton = Button("View highscores!")
             viewHighscoresButton.setOnAction {
-                ViewHighScores.show()
+                ViewHighScores.show(user)
                 stage.close()
             }
             viewHighscoresButton.style = buttonSTYLE

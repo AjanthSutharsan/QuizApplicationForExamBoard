@@ -12,7 +12,7 @@ class FinishedPlayingQuiz
 {
     companion object
     {
-        fun show()
+        fun show(user: User, quizID: Int, totalScore: Int)
         {
             val stage = Stage()
             stage.width = 1000.0
@@ -37,7 +37,7 @@ class FinishedPlayingQuiz
             // Label giving the user their total score for the quiz and asking them as to what they want to do next
             val explanatoryHBox = HBox()
             (0 until 14).forEach { explanatoryHBox.children.add(Label("       ")) }
-            val explanatoryLabel = TextArea("You have finished the quiz!\nYour score was 'Enter Score Here' / 10 \nWould you like to return to the main menu?")
+            val explanatoryLabel = TextArea("You have finished the quiz!\nYour score was $totalScore / 10 \nWould you like to return to the main menu?")
             explanatoryLabel.isEditable = false
             explanatoryLabel.setMaxSize(300.0, 80.0)
             explanatoryHBox.children.add(explanatoryLabel)
@@ -54,7 +54,7 @@ class FinishedPlayingQuiz
             val yesButton = Button("Yes!")
             yesButton.setMinSize(250.0, 120.0)
             yesButton.setOnAction {
-                MainMenu.show()
+                MainMenu.show(user)
                 stage.close()
             }
             yesNoHBox.children.add(yesButton)
@@ -66,6 +66,7 @@ class FinishedPlayingQuiz
             noButton.setOnAction { stage.close() }
             yesNoHBox.children.add(noButton)
 
+            DBService.saveScoreToDatabase(user, quizID, totalScore)
 
             stage.show()
         }

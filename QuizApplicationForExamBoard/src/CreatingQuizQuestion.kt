@@ -8,7 +8,7 @@ import javafx.stage.Stage
 class CreatingQuizQuestion {
     companion object
     {
-        fun show(questionNumber: Int)
+        fun show(questionNumber: Int, user: User, quizID: Int)
         {
             val stage = Stage()
             stage.width = 1000.0
@@ -31,7 +31,7 @@ class CreatingQuizQuestion {
             hbox.children.addAll(leftVBox, divider, rightVBox)
 
             // user label containing the userID and the name of the user
-            val userLabel = TextArea("ID: 63485\nName: Lelouch Lamperouge")
+            val userLabel = TextArea("ID: ${user.userID}\nName: ${user.firstName} ${user.lastName}")
             userLabel.isEditable = false
             userLabel.setMinSize(110.0, 20.0)
             leftVBox.children.add(userLabel)
@@ -76,8 +76,11 @@ class CreatingQuizQuestion {
             val nextButton = Button("Next!")
             nextButton.setMinSize(110.0, 60.0)
             nextButton.setOnAction {
-                if (questionNumber != 10) show(questionNumber + 1)
-                else FinishedCreatingQuiz.show()
+                val question = Question(-1, questionName.text, answerTexts[3].text, arrayListOf(answerTexts[0].text, answerTexts[1].text, answerTexts[2].text), quizID) //question object is built from the suer input
+                DBService.writeOneQuestion(question) // question is saved to database
+
+                if (questionNumber != 10) show(questionNumber + 1, user, quizID)
+                else FinishedCreatingQuiz.show(user)
                 stage.close()
             }
             val nextButtonHBox = HBox()

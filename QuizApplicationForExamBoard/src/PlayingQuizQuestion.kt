@@ -5,14 +5,18 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.util.*
+import kotlin.collections.ArrayList
 
 class PlayingQuizQuestion
 {
     companion object
     {
+        private var runningTotal = 0
 
-        fun show(questionIndex: Int)
+        fun show(questionIndex: Int, user: User, questions: ArrayList<Question>, quizID: Int)
         {
+            val question = questions[questionIndex]
+
             val stage = Stage()
             stage.width = 1000.0
             stage.height = 650.0
@@ -34,7 +38,7 @@ class PlayingQuizQuestion
             hbox.children.addAll(leftVBox, divider, rightVBox)
 
             // user label which displays the userId and the name of the user
-            val userLabel = TextArea("ID: 63475 \nName: Lelouch Lamperouge")
+            val userLabel = TextArea("ID: ${user.userID}\nName: ${user.firstName} ${user.lastName}")
             userLabel.isEditable = false
             userLabel.setMaxSize(170.0, 45.0)
             leftVBox.children.add(userLabel)
@@ -47,11 +51,11 @@ class PlayingQuizQuestion
             leftVBox.children.add(questionNumberLabel)
 
             // Label displaying the actual question
-            val questionTitle = TextField("This is where the actual question will be displayed")
+            val questionTitle = TextField(question.title)
             questionTitle.isEditable = false
             leftVBox.children.add(questionTitle)
 
-            // Guidance Text to help the user when they are answering the questiob
+            // Guidance Text to help the user when they are answering the question
             val guidanceText = TextArea("REMEMBER: You cannot come back to a question, so be careful! \n \nTo move to the next question, either double click an answer, \n or click the answer once and press `next`.")
             guidanceText.setMaxSize(600.0, 100.0)
             guidanceText.isEditable = false
@@ -59,25 +63,34 @@ class PlayingQuizQuestion
             leftVBox.children.add(guidanceText)
 
 
-            fun showNextQuestion()
+            // answers + randomising
+            var answerNames = ArrayList<String>() + question.correctAnswer
+            question.incorrectAnswers.forEach { answerNames += it }
+            Collections.shuffle(answerNames)
+
+            fun showNextQuestion(isCorrect: Boolean)
             {
+                if (isCorrect) runningTotal++
                 if (questionIndex + 1 < 10) // if there is a next question to show
                 {
-                    show(questionIndex + 1)
+                    show(questionIndex + 1, user, questions, quizID)
                     stage.close()
                 }
-                else { FinishedPlayingQuiz.show(); stage.close() }
+                else { FinishedPlayingQuiz.show(user, quizID, runningTotal); stage.close() }
             }
 
+            var answerCorrect = false
             var viewQuestionNext = false
 
-            (0 until 4).forEach { answer
+            answerNames.forEach { answer
                 ->
-                val answerButton = Button("These are the answer buttons")
+                val answerButton = Button(answer)
                 answerButton.setMinSize(250.0, 70.0)
                 answerButton.setOnAction {
-                    if (viewQuestionNext) showNextQuestion()
-                    viewQuestionNext = true // this will allow for the user to move onto the next question if it's doubled
+                    answerCorrect = answer == question.correctAnswer
+
+                    if (viewQuestionNext) showNextQuestion(answerCorrect)
+                    viewQuestionNext = true
                 }
                 rightVBox.children.add(answerButton)
                 (0 until 2).forEach { rightVBox.children.add(Label("")) }
@@ -87,7 +100,7 @@ class PlayingQuizQuestion
             val nextButton = Button("Next")
             nextButton.setMinSize(110.0, 60.0)
             nextButton.setOnAction {
-                if (viewQuestionNext) showNextQuestion()
+                if (viewQuestionNext) showNextQuestion(answerCorrect)
                 else Alert(Alert.AlertType.ERROR, "You haven't submitted an answer yet").showAndWait()
             }
             val nextButtonHBox = HBox()
