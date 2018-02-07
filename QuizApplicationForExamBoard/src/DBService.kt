@@ -62,5 +62,32 @@ class DBService
             if (quizIDs.isNotEmpty()) return quizIDs.last().toInt() //if there are quizID values in the Quiz table, the first quizID which is free is returned
             return 1 //if there are no quizID values in the quiz table, a value of 1 is returned as it's the first quizID
         }
+
+        fun getFirstLastName(userID: Int) =  connection.linesFromQuery("SELECT firstName, lastName FROM Users WHERE userID = $userID;").toList()[0] //finds the first and last names of a user with a specific userID
+
+        fun getScoreData(quizID: Int): ArrayList<ScoreTableData>
+        {
+            val firstPass = ArrayList<ArrayList<String>>() //first pass contains each record for the scores for a specific quiz which has a specific quizID
+            connection.linesFromQuery("SELECT * FROM Scores WHERE quizID = $quizID ORDER BY score DESC;").forEach { firstPass += it.split("\t") as ArrayList } //each record is order such that the highest scores are at the top is split and becomes an ArrayList and then each record is added to first pass
+            val scoreTableData = ArrayList<ScoreTableData>() //ArrayList which will contain the relevant data to be displayed on the tableview
+            firstPass.forEach {
+                val userID = it[1].toInt() //each element of first pass is a record in the form of an ArrauList where the second element of the record is the userID
+                scoreTableData += ScoreTableData(
+                        userID,
+                        getFirstLastName(userID).split("\t")[0], // first name
+                        getFirstLastName(userID).split("\t")[1], // last name
+                        it[3].toInt() //each element of first pass is a record in the form of an ArrauList where the fourth element of the record is the score
+                )
+            }
+            return scoreTableData
+        }
+
+        fun userExists(userID: Int, password: String) = connection.linesFromQuery("SELECT * FROM Users WHERE userID = $userID AND password = '$password';").isNotEmpty() //executes a query to find the user with a specific userID and
+
+        fun getUserFromID(userID: Int): User
+        {
+            val userData = connection.linesFromQuery("SELECT * FROM Users WHERE userID = $userID")[0].split("\t") //userID is a primary key so only record will be returned and so one arraylist is formed
+            return User(userData[0].toInt(), userData[1], userData[2], userData[3]) //creates the User object from the different entries in the record
+        }
     }
 }

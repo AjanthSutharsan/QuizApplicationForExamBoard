@@ -70,9 +70,14 @@ class Main : Application()
         val loginHBox = HBox() //HBox which contains the button to log the user in
         val loginButton = Button("Log In!")
         loginButton.setOnAction {
-            MainMenu.show(User(63495, "Euphemia", "Li Britannia", "PeaceWithTheElevens"))
+            if (DBService.userExists(userIDField.text.trim().toInt(), passwordField.text.trim())) //spaces are removed from the ends of the user input and then the user input is checked to see if the combination of userId and password is valid
+            {
+                MainMenu.show(DBService.getUserFromID(userIDField.text.toInt())) // if the combination is valid, the user's information would be retrieved and would be displayed on the home scren
+                stage.close()
+            }
+            else Alert(Alert.AlertType.ERROR, "Invalid college ID and/or password.\nRemember, college ID should be 5 digits long.").showAndWait() //if the combination wasn't valid then an alert would appear to tell the user that it was invalid and give them guidance as to what the input should be
             stage.close()
-        } //when the button is clicked, the application will currently move immediately to the home screen
+        } //when the button is now clicked, the application will validate the user's input
         (0 until 22).forEach { loginHBox.children.add(Label("      ")) }
         loginHBox.children.add(loginButton)
         (0 until 2).forEach { vbox.children.add(Label("")) } //horizontal padding between the left edge of the loginHBox and the centre of the window

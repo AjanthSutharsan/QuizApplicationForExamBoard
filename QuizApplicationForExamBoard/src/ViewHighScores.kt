@@ -2,6 +2,7 @@ import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.control.*
+import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
@@ -59,20 +60,27 @@ class ViewHighScores
             (0 until 1).forEach { rightVBox.children.add(Label("")) }
             rightVBox.children.add(highscoreTypeCombo)
 
-            val table = TableView<String>() //tableview which will display the highscores
+
+            val table = TableView<ScoreTableData>() //tableview which will display the highscores is now a tableview which uses ScoreTableData objects
             table.minWidth = 800.0
-            val highscoreCombo = ComboBox<String>()
+            val highscoreCombo = ComboBox<Quiz>(FXCollections.observableArrayList(DBService.allQuizNames())) //shows the user all the quizzes in alphabetical order
             highscoreCombo.selectionModel.select(0)
             (0 until 1).forEach { rightVBox.children.add(Label("")) }
             rightVBox.children.add(highscoreCombo)
 
             // bottom -- columns of tableview
             bottomHBox.children.add(table)
-            val idCol = TableColumn<String, String>("User ID")
-            val firstNameCol = TableColumn<String, String>("First Name")
-            val lastNameCol = TableColumn<String, String>("Last Name")
-            val scoreCol = TableColumn<String, String>("Score")
+            val idCol = TableColumn<ScoreTableData, String>("User ID") //all the columns also use ScoreTableData now
+            val firstNameCol = TableColumn<ScoreTableData, String>("First Name")
+            val lastNameCol = TableColumn<ScoreTableData, String>("Last Name")
+            val scoreCol = TableColumn<ScoreTableData, String>("Score")
             table.columns.addAll(idCol, firstNameCol, lastNameCol, scoreCol)
+
+            //these lines show which of the attributes of the ScoreTableData objects should be shown in which column
+            idCol.cellValueFactory = PropertyValueFactory<ScoreTableData, String>("userID")  //the userID attribute of each object will be displayed in this column
+            firstNameCol.cellValueFactory = PropertyValueFactory<ScoreTableData, String>("firstName") //the firstName attribute of each object will be displayed in this column
+            lastNameCol.cellValueFactory = PropertyValueFactory<ScoreTableData, String>("lastName") //the lastName attribute of each object will be displayed in this column
+            scoreCol.cellValueFactory = PropertyValueFactory<ScoreTableData, String>("score") //the score attribute of each object will be displayed in this column
 
             idCol.prefWidthProperty().bind(table.widthProperty().multiply(0.25))
             firstNameCol.prefWidthProperty().bind(table.widthProperty().multiply(0.25))
@@ -88,7 +96,10 @@ class ViewHighScores
             //button which, when pressed, will display the highscores on the tableview
             val displayButton = Button("Display!")
             displayButton.setOnAction {
-                Alert(Alert.AlertType.ERROR, "This button doesn’t do anything yet").showAndWait()
+                if (highscoreTypeCombo.selectionModel.selectedItem == "All Users")
+                    table.items = FXCollections.observableArrayList(DBService.getScoreData(highscoreCombo.selectionModel.selectedItem.quizID)) //will simply show the highest scores achieved by all users
+                else
+                    table.items = FXCollections.observableArrayList(DBService.getScoreData(highscoreCombo.selectionModel.selectedItem.quizID).filter { it.getUserID().toInt() == user.userID }) //the records will be filtered such that only the records with the user's userID remain
             }
             (0 until 1).forEach { rightVBox.children.add(Label("")) }
             rightVBox.children.add(displayButton)
